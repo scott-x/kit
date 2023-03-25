@@ -2,10 +2,7 @@ package restrict
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
 type RestrictKey int
@@ -42,28 +39,35 @@ func (field *DBField) AddRestrict(key RestrictKey, value interface{}) {
 }
 
 // the praram get from gin is string only
-func NewDBField(c *gin.Context, arg string) *DBField {
-	value := c.Query(arg)
-	if strings.TrimSpace(value) == "" {
-		return nil
+func NewDBField(arg string, value interface{}) *DBField {
+	switch res := value.(type) {
+	case int:
+		if res == 0 {
+			return nil
+		}
+	case string:
+		if strings.TrimSpace(res) == "" {
+			return nil
+		}
 	}
 	return &DBField{
 		Name: arg,
 	}
 }
 
-func NewDBFieldWithSingleRestrict(c *gin.Context, param string, key RestrictKey, convert2int bool) *DBField {
-	value := strings.TrimSpace(c.Query(param))
-	if value == "" {
-		return nil
+func NewDBFieldWithSingleRestrict(param string, value interface{}, key RestrictKey) *DBField {
+	switch res := value.(type) {
+	case int:
+		if res == 0 {
+			return nil
+		}
+	case string:
+		if strings.TrimSpace(res) == "" {
+			return nil
+		}
 	}
-	field := NewDBField(c, param)
-	if convert2int {
-		_value, _ := strconv.Atoi(value)
-		field.AddRestrict(key, _value)
-	} else {
-		field.AddRestrict(key, value)
-	}
+	field := NewDBField(param, value)
+	field.AddRestrict(key, value)
 	return field
 }
 
