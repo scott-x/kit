@@ -127,9 +127,9 @@ func HandleDbFiles(db_fields []*DBField) ([]interface{}, string) {
 				}
 			case LOCATE:
 				if num_of_valid_condition == 0 {
-					condition += fmt.Sprintf(` locate(%s , %s)>0 `, value.(string), fieldName)
+					condition += fmt.Sprintf(` locate('%s' , %s)>0 `, value.(string), fieldName)
 				} else {
-					condition += fmt.Sprintf(` and locate(%s , %s)>0 `, value.(string), fieldName)
+					condition += fmt.Sprintf(` and locate('%s' , %s)>0 `, value.(string), fieldName)
 				}
 			}
 			num_of_valid_condition++
