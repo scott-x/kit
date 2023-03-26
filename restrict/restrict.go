@@ -25,6 +25,7 @@ const (
 	LIKE                      //like '%%'
 	L_Like                    //left like
 	R_Like                    //right like
+	LOCATE                    //locate
 )
 
 func (field *DBField) AddRestrict(key RestrictKey, value interface{}) {
@@ -123,6 +124,12 @@ func HandleDbFiles(db_fields []*DBField) ([]interface{}, string) {
 					condition += fieldName + ` like CONCAT(?,'%')`
 				} else {
 					condition += " and " + fieldName + ` like CONCAT(?,'%')`
+				}
+			case LOCATE:
+				if num_of_valid_condition == 0 {
+					condition += fmt.Sprintf(` locate(%s , %s)>0 `, value.(string), fieldName)
+				} else {
+					condition += fmt.Sprintf(` and locate(%s , %s)>0 `, value.(string), fieldName)
 				}
 			}
 			num_of_valid_condition++
