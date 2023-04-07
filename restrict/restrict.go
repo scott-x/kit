@@ -2,6 +2,8 @@ package restrict
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 )
 
@@ -56,7 +58,15 @@ func NewDBField(arg string, value interface{}) *DBField {
 	}
 }
 
-func NewDBFieldWithSingleRestrict(param string, value interface{}, key RestrictKey) *DBField {
+// param: must be mysql field
+func NewDBFieldWithSingleRestrict(c *gin.Context, param string, convert2int bool, key RestrictKey) *DBField {
+	received := c.Query(param)
+	var value interface{}
+	if convert2int {
+		value, _ = strconv.Atoi(received)
+	} else {
+		value = received
+	}
 	switch res := value.(type) {
 	case int:
 		if res == 0 {

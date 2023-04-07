@@ -31,6 +31,8 @@ func (r *Response) Do(c *gin.Context) {
 	}
 
 	data := r.Data
+
+	//success
 	if data != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": 2000,
